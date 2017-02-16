@@ -115,7 +115,7 @@ int main(){
 
     Interval y = {21, 23};
  
-    cout << "\nSearching for interval {" << x.low << "," << x.high << "}";
+    cout << "\nSearching for interval {" << y.low << "," << y.high << "}";
     res = overlapSearch(root, y);
 
 
