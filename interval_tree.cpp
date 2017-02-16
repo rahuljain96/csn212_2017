@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <cstdlib>
+#include <cstdio>
 using namespace std;
 
 struct Interval{  // To represent an interval
@@ -19,6 +21,53 @@ IT_Node * newNode(Interval i)  // To create a new interval in Interval Tree
     temp->max = i.high;
     temp->left = temp->right = NULL;
 };
+
+IT_Node* minValueNode(IT_Node* node)
+{
+    IT_Node* current = node;
+ 
+    while (current->left != NULL)
+        current = current->left;
+ 
+    return current;
+}
+
+IT_Node *deleteNode(IT_Node* root, Interval i)
+{
+    // base case
+    if (root == NULL) return root;
+
+    int k = root->i->low;
+ 
+    if (i.low < k)
+        root->left = deleteNode(root->left, i);
+ 
+    else if (i.low > k)
+        root->right = deleteNode(root->right, i);
+ 
+    else
+    {
+        if (root->left == NULL)
+        {
+            IT_Node *temp = root->right;
+            free(root);
+            return temp;
+        }
+        else if (root->right == NULL)
+        {
+            IT_Node *temp = root->left;
+            free(root);
+            return temp;
+        }
+ 
+        IT_Node* temp = minValueNode(root->right);
+ 
+        root->i = temp->i;
+ 
+        root->right = deleteNode(root->right, *temp->i);
+    }
+    return root;
+}
 
 IT_Node *insert(IT_Node *root, Interval i)  
 {
@@ -98,6 +147,8 @@ int main(){
 		root = insert(root, V[i]);
 	}
 
+	//root = deleteNode(root, V[3]);
+
 	// Inorder traversal of Interval Tree
 	cout << "Inorder traversal of the Interval Tree :\n";
     inorder(root);
@@ -111,7 +162,7 @@ int main(){
     if (res == NULL)
         cout << "\nNo Overlapping Interval";
     else
-        cout << "\nOverlaps with {" << res->low << ", " << res->high << "}";
+        cout << "\nOverlaps with {" << res->low << ", " << res->high << "}\n";
 
     Interval y = {21, 23};
  
@@ -122,9 +173,13 @@ int main(){
     if (res == NULL)
         cout << "\nNo Overlapping Interval";
     else
-        cout << "\nOverlaps with {" << res->low << ", " << res->high << "}";
+        cout << "\nOverlaps with {" << res->low << ", " << res->high << "}\n";
 
-
+    cout<<"\nDeleting Interval {5,20} from the Interval Tree :\n";
+    root = deleteNode(root, V[3]);
+    // Inorder traversal of Interval Tree
+	cout << "Inorder traversal of the New Interval Tree after deletion :\n";
+    inorder(root);
 
 	return 0;
 }
