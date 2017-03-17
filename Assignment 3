@@ -1,0 +1,109 @@
+#include <iostream>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
+#include <time.h>
+
+using namespace std;
+
+// a structure to represent a weighted edge in graph
+struct Edge
+{
+	int src, dest, weight;
+};
+
+// a structure to represent a connected, directed and 
+// weighted graph
+struct Graph
+{
+	// V-> Number of vertices, E-> Number of edges
+	int V, E;
+
+	// graph is represented as an array of edges.
+	struct Edge* edge;
+};
+
+// Creates a graph with V vertices and E edges
+struct Graph* createGraph(int V, int E)
+{
+	struct Graph* graph = 
+		(struct Graph*) malloc( sizeof(struct Graph) );
+	graph->V = V;
+	graph->E = E;
+
+	graph->edge = 
+	(struct Edge*) malloc( graph->E * sizeof( struct Edge ) );
+
+	return graph;
+}
+
+void BellmanFord(struct Graph* graph, int src)
+{
+	int V = graph->V;
+	int E = graph->E;
+	int dist[V];
+
+	for (int i = 0; i < V; i++)
+		dist[i] = INT_MAX;
+	dist[src] = 0;
+
+	for (int i = 1; i <= V-1; i++)
+	{
+		for (int j = 0; j < E; j++)
+		{
+			int u = graph->edge[j].src;
+			int v = graph->edge[j].dest;
+			int weight = graph->edge[j].weight;
+			if (dist[u] != INT_MAX && dist[u] + weight < dist[v])
+				dist[v] = dist[u] + weight;
+		}
+	}
+
+	return;
+}
+
+// Driver program to test above functions
+int main()
+{
+    clock_t t1,t2;
+ // Creating our test cases
+    int test[7];
+	test[0]=10;
+	test[1]=100;
+	test[2]=500;
+	test[3]=1000;
+	test[4]=2000;
+	test[5]=5000;
+    test[6]=10000;
+    // creating the input graphs
+	for (int i=0;i<7;i++){
+	    int V=test[i];
+	    int E=(V*(V-1));
+	    struct Graph* graph = createGraph(V,E);
+	    int ed=0;
+	    int w;
+	    for (int j=2;j<i+1;j++){
+	        for (int k=j+1;k<i+1;k++){
+	           graph->edge[ed].src=j;
+	           graph->edge[ed].dest=k;
+	           w=rand() % 21 + -10;
+	           graph->edge[ed].weight=w;
+	           graph->edge[ed+1].src=k;
+	           graph->edge[ed+1].dest=j;
+	           w=rand() % 21 + -10;
+	           graph->edge[ed+1].weight=w;
+	           ed+=2;
+	        }
+	    }
+	    // timing the algorithm
+	    t1=clock();
+	    BellmanFord(graph,0);
+	    t2=clock();
+	    float difference= (((float)t2)-((float)t1));
+	    float s = difference/1000; // float value of milliseconds
+        cout<<"Time taken for graph with "<<V<<" Vertices is "<<s<<" milliseconds"<<endl;
+	}
+	return 0;
+}
+	
