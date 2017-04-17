@@ -158,8 +158,6 @@ void grahamScan(Point points[], int n)
    }
 }
 
-// QUICKHULL ALGORITHM
-
 int main()
 {
 clock_t t1,t2,t3;
